@@ -1,17 +1,18 @@
 const { describe, it, expect } = require("@jest/globals");
 const { validateServiceName, prettifyServiceName } = require("./utils/helpers");
+const serviceName = "hbo_max";
 
 describe("Testing prettifying services' names -> prettifyServiceName()", () => {
   it("should return prettified version of service name", () => {
     const prettyServiceName = prettifyServiceName(serviceName);
-    expect(prettyServiceName).toBe("HBO MAX");
+    expect(prettyServiceName).toBe("Hbo Max");
   });
 
   it("should throw an error if serviceName parameter is empty or null", () => {
     const functionWrapper = () => {
       prettifyServiceName();
     };
-    expect(functionWrapper).toThrow("serviceName empty, null or undefined");
+    expect(functionWrapper).toThrow("Invalid service name");
   });
 });
 

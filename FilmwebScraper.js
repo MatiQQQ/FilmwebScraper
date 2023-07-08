@@ -65,7 +65,6 @@ class FilmwebScraper {
   }
 
   async writeToCSV(moviesArray, path = "./output/movies2023.csv") {
-    logger.info(`Writing data to ${path}`);
     if (!moviesArray || moviesArray.length === 0)
       throw Error("Array of movies has to be defined and not empty");
     if (fsExistsSync(path)) {
@@ -73,12 +72,15 @@ class FilmwebScraper {
       await fsUnlink(path);
     }
     try {
+      logger.info(`Writing data to ${path}`);
       const heading = `No.,Title,Rating,Service\n`;
+
       await fsAppendFile(path, heading);
       for (let [index, movie] of moviesArray.entries()) {
         let line = `${index + 1},${movie.title},${movie.rating}, ${
           movie.serviceName
         }\n`;
+
         await fsAppendFile(path, line);
       }
     } catch (error) {

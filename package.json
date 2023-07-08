@@ -4,7 +4,7 @@
   "description": "Application that will get list of movies from 4 vod services (source: filmweb), extract them, sort and save 10 top movies based on rating into csv file",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --verbose",
     "test:watch": "jest --watchAll",
     "start": "node index.js"
   },
