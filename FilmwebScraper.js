@@ -4,9 +4,6 @@ const { existsSync: fsExistsSync } = require("fs");
 const { appendFile: fsAppendFile, unlink: fsUnlink } = require("fs/promises");
 const _ = require("lodash");
 const pino = require("pino");
-
-const CURRENT_YEAR = new Date().getFullYear();
-const VOD_NAMES = ["netflix", "hbo_max", "canal_plus_manual", "disney"];
 const { validateServiceName, prettifyServiceName } = require("./utils/helpers");
 const logger = pino({
   transport: {
@@ -17,6 +14,12 @@ const logger = pino({
   },
 });
 
+// title => .rankingType__title
+// rate => .rankingType__rate--value
+
+const CURRENT_YEAR = new Date().getFullYear();
+const VOD_NAMES = ["netflix", "hbo_max", "canal_plus_manual", "disney"];
+
 class FilmwebScraper {
   async getMoviesFromFilmweb(serviceName, page = 1, year = CURRENT_YEAR) {
     const url = `https://www.filmweb.pl/ajax/ranking/vod/${serviceName}/film/${year}/${page}`;
@@ -26,6 +29,25 @@ class FilmwebScraper {
     } catch (error) {
       throw Error(error);
     }
+  }
+  extractMovies(serviceName, data) {
+    const resultArray = [];
+    const parametersAreValid =
+      validateServiceName(serviceName) && validateServiceName(data);
+    if (!parametersAreValid) throw Error("Parameters are not valid");
+    logger.info(`Extracting data from ${serviceName}`);
+    const $ = cheerio.load(data);
+    $(".rankingType").map((i, el) => {
+      if (resultArray.length > 10) return;
+      const title = $(el).find(".rankingType__title").text();
+      const rating = $(el).find(".rankingType__rate--value").text();
+      resultArray.push({
+        title,
+        rating: Number.parseFloat(rating),
+        serviceName,
+      });
+    });
+    return resultArray;
   }
 }
 
