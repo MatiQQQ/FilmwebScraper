@@ -7,6 +7,7 @@ const pino = require("pino");
 
 const CURRENT_YEAR = new Date().getFullYear();
 const VOD_NAMES = ["netflix", "hbo_max", "canal_plus_manual", "disney"];
+const { validateServiceName, prettifyServiceName } = require("./utils/helpers");
 const logger = pino({
   transport: {
     target: "pino-pretty",
