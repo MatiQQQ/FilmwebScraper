@@ -1,5 +1,11 @@
 const { describe, it, expect } = require("@jest/globals");
-const { validateServiceName, prettifyServiceName } = require("./utils/helpers");
+const { existsSync: fsExistsSync } = require("fs");
+const { dirname: pathDirname } = require("path");
+const {
+  validateServiceName,
+  prettifyServiceName,
+  checkIfFolderExistsAndCreate,
+} = require("./utils/helpers");
 const serviceName = "hbo_max";
 
 describe("Testing prettifying services' names -> prettifyServiceName()", () => {
@@ -29,5 +35,22 @@ describe("Testing text validation function -> validateServiceName()", () => {
       validateServiceName(null) &&
       validateServiceName(987);
     expect(isValidTextParameter).toBe(false);
+  });
+});
+
+describe("Testing checkIfFolderExistsAndCreate()", () => {
+  const path = "./test_output/movies.csv";
+  it("should throw an error if path is undefined, empty, null or number", () => {
+    const functionWrapper = async () => {
+      await checkIfFolderExistsAndCreate();
+    };
+
+    expect(functionWrapper).rejects.toThrow("Invalid path");
+  });
+
+  it("should create a folder structure from path is proper path is provided", async () => {
+    await checkIfFolderExistsAndCreate(path);
+    const folderExists = fsExistsSync(pathDirname(path));
+    expect(folderExists).toBe(true);
   });
 });

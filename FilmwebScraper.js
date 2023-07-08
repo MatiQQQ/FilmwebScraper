@@ -4,7 +4,11 @@ const { existsSync: fsExistsSync } = require("fs");
 const { appendFile: fsAppendFile, unlink: fsUnlink } = require("fs/promises");
 const _ = require("lodash");
 const pino = require("pino");
-const { validateServiceName, prettifyServiceName } = require("./utils/helpers");
+const {
+  validateServiceName,
+  prettifyServiceName,
+  checkIfFolderExistsAndCreate,
+} = require("./utils/helpers");
 const logger = pino({
   transport: {
     target: "pino-pretty",
@@ -64,29 +68,31 @@ class FilmwebScraper {
     }
   }
 
-  async writeToCSV(moviesArray, path = "./output/movies2023.csv") {
+  async writeToCSV(moviesArray, filePath = "./output/movies2023.csv") {
     if (!moviesArray || moviesArray.length === 0)
       throw Error("Array of movies has to be defined and not empty");
-    if (fsExistsSync(path)) {
-      logger.warn("Found old file... Deleting");
-      await fsUnlink(path);
-    }
+
     try {
-      logger.info(`Writing data to ${path}`);
+      await checkIfFolderExistsAndCreate(filePath);
+      if (fsExistsSync(filePath)) {
+        logger.warn("Found old file... Deleting");
+        await fsUnlink(filePath);
+      }
+      logger.info(`Writing data to ${filePath}`);
       const heading = `No.,Title,Rating,Service\n`;
 
-      await fsAppendFile(path, heading);
+      await fsAppendFile(filePath, heading);
       for (let [index, movie] of moviesArray.entries()) {
         let line = `${index + 1},${movie.title},${movie.rating}, ${
           movie.serviceName
         }\n`;
 
-        await fsAppendFile(path, line);
+        await fsAppendFile(filePath, line);
       }
     } catch (error) {
       throw Error(error);
     }
-    logger.info(`Writing to ${path} completed`);
+    logger.info(`Writing to ${filePath} completed`);
   }
 
   async init() {
