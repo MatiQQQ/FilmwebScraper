@@ -49,6 +49,20 @@ class FilmwebScraper {
     });
     return resultArray;
   }
+  async export10MoviesFromEachService(serviceName, page = 1, result = []) {
+    const isValidServiceName = validateServiceName(serviceName);
+    if (!isValidServiceName) throw Error("Invalid service name");
+    const prettyServiceName = prettifyServiceName(serviceName);
+    try {
+      const { data } = await this.getMoviesFromFilmweb(serviceName, page);
+      if (page >= 5) return result;
+      if (result.length > 10) return result;
+      const scrappedData = this.extractMovies(prettyServiceName, data);
+      result.push(...scrappedData);
+      return this.export10MoviesFromEachService(serviceName, ++page, result);
+    } catch (error) {
+      throw Error(error);
+    }
+  }
 }
-
 module.exports = { FilmwebScraper, logger };
