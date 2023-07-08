@@ -1,15 +1,14 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
-const { existsSync: fsExistsSync, existsSync } = require("fs");
-const path = require("path");
-const {
-  appendFile: fsAppendFile,
-  unlink: fsUnlink,
-  mkdir: fsMkdir,
-} = require("fs/promises");
+const { existsSync: fsExistsSync } = require("fs");
+const { appendFile: fsAppendFile, unlink: fsUnlink } = require("fs/promises");
 const _ = require("lodash");
 const pino = require("pino");
-const { validateServiceName, prettifyServiceName } = require("./utils/helpers");
+const {
+  validateServiceName,
+  prettifyServiceName,
+  checkIfFolderExistsAndCreate,
+} = require("./utils/helpers");
 const logger = pino({
   transport: {
     target: "pino-pretty",
@@ -72,20 +71,13 @@ class FilmwebScraper {
   async writeToCSV(moviesArray, filePath = "./output/movies2023.csv") {
     if (!moviesArray || moviesArray.length === 0)
       throw Error("Array of movies has to be defined and not empty");
-    const folderPath = path.dirname(filePath);
-    if (!fsExistsSync(folderPath)) {
-      try {
-        await fsMkdir(folderPath, { recursive: true });
-        logger.info(`Folder ${folderPath} created`);
-      } catch (error) {
-        throw Error("Error with folder creation");
-      }
-    }
-    if (fsExistsSync(filePath)) {
-      logger.warn("Found old file... Deleting");
-      await fsUnlink(filePath);
-    }
+
     try {
+      await checkIfFolderExistsAndCreate(filePath);
+      if (fsExistsSync(filePath)) {
+        logger.warn("Found old file... Deleting");
+        await fsUnlink(filePath);
+      }
       logger.info(`Writing data to ${filePath}`);
       const heading = `No.,Title,Rating,Service\n`;
 
