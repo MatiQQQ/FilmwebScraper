@@ -64,5 +64,7 @@ class FilmwebScraper {
       throw Error(error);
     }
   }
+
+  async init() {}
 }
 module.exports = { FilmwebScraper, logger };
