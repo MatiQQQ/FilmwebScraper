@@ -1,0 +1,26 @@
+{
+  "name": "filmwebscraper",
+  "version": "1.0.0",
+  "description": "Application that will get list of movies from 4 vod services (source: filmweb), extract them, sort and save 10 top movies based on rating into csv file",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MatiQQQ/FilmwebScraper.git"
+  },
+  "author": "MBaranski",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MatiQQQ/FilmwebScraper/issues"
+  },
+  "homepage": "https://github.com/MatiQQQ/FilmwebScraper#readme",
+  "dependencies": {
+    "axios": "^1.4.0",
+    "cheerio": "^1.0.0-rc.12",
+    "lodash": "^4.17.21",
+    "pino": "^8.14.1",
+    "pino-pretty": "^10.0.1"
+  }
+}
