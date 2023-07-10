@@ -5,7 +5,7 @@ const { appendFile: fsAppendFile, unlink: fsUnlink } = require("fs/promises");
 const _ = require("lodash");
 const pino = require("pino");
 const {
-  validateServiceName,
+  validateTextParam,
   prettifyServiceName,
   checkIfFolderExistsAndCreate,
 } = require("./utils/helpers");
@@ -36,7 +36,7 @@ class FilmwebScraper {
   extractMovies(serviceName, data, page = 1) {
     const resultArray = [];
     const parametersAreValid =
-      validateServiceName(serviceName) && validateServiceName(data);
+      validateTextParam(serviceName) && validateTextParam(data);
     if (!parametersAreValid) throw Error("Parameters are not valid");
     logger.info(`Extracting data from ${serviceName}. Page: ${page}`);
     const $ = cheerio.load(data);
@@ -53,16 +53,14 @@ class FilmwebScraper {
     return resultArray;
   }
   async export10MoviesFromEachService(serviceName, page = 1, result = []) {
-    const isValidServiceName = validateServiceName(serviceName);
+    const isValidServiceName = validateTextParam(serviceName);
     if (!isValidServiceName) throw Error("Invalid service name");
     const prettyServiceName = prettifyServiceName(serviceName);
     try {
       const { data } = await this.getMoviesFromFilmweb(serviceName, page);
-      if (page >= 5) return result;
-      if (result.length > 10) return result;
       const scrappedData = this.extractMovies(prettyServiceName, data, page);
       result.push(...scrappedData);
-      return this.export10MoviesFromEachService(serviceName, ++page, result);
+      return result;
     } catch (error) {
       throw Error(error);
     }
