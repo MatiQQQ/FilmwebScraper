@@ -2,7 +2,7 @@ const { describe, it, expect } = require("@jest/globals");
 const { existsSync: fsExistsSync } = require("fs");
 const { dirname: pathDirname } = require("path");
 const {
-  validateServiceName,
+  validateTextParam,
   prettifyServiceName,
   checkIfFolderExistsAndCreate,
 } = require("./utils/helpers");
@@ -22,18 +22,18 @@ describe("Testing prettifying services' names -> prettifyServiceName()", () => {
   });
 });
 
-describe("Testing text validation function -> validateServiceName()", () => {
+describe("Testing text validation function -> validateTextParam()", () => {
   it("should return true if parameter is proper text value (defined, not null, not empty, not a number)", () => {
-    const isValidTextParameter = validateServiceName("netflix");
+    const isValidTextParameter = validateTextParam("netflix");
     expect(isValidTextParameter).toBe(true);
   });
 
   it("should return false if parameter is not proper string (undefined, null, empty, number)", () => {
     const isValidTextParameter =
-      validateServiceName("") &&
-      validateServiceName() &&
-      validateServiceName(null) &&
-      validateServiceName(987);
+      validateTextParam("") &&
+      validateTextParam() &&
+      validateTextParam(null) &&
+      validateTextParam(987);
     expect(isValidTextParameter).toBe(false);
   });
 });

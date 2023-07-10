@@ -11,7 +11,7 @@ const logger = pino({
   },
 });
 
-exports.validateServiceName = (serviceName) => {
+exports.validateTextParam = (serviceName) => {
   let isValid = true;
   if (!serviceName) isValid = false;
   if (typeof serviceName !== "string") isValid = false;
@@ -20,7 +20,7 @@ exports.validateServiceName = (serviceName) => {
 };
 
 exports.prettifyServiceName = (serviceName) => {
-  const isValidServiceName = this.validateServiceName(serviceName);
+  const isValidServiceName = this.validateTextParam(serviceName);
   if (!isValidServiceName) throw Error("Invalid service name");
   if (serviceName === "canal_plus_manual") return "Canal+";
   const clearedString = serviceName.includes("_")
@@ -34,7 +34,7 @@ exports.prettifyServiceName = (serviceName) => {
 };
 
 exports.checkIfFolderExistsAndCreate = async (path) => {
-  if (!this.validateServiceName(path)) throw Error("Invalid path");
+  if (!this.validateTextParam(path)) throw Error("Invalid path");
   const folderPath = pathDirname(path);
   if (!fsExistsSync(folderPath)) {
     try {
